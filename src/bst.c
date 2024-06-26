@@ -96,6 +96,15 @@ void bst_delete(Node *bst)
     // If has child node to left
     if (match->right == NULL)
     {
+        if (match->parent == NULL)
+        {
+            match->value = match->left->value;
+            strncpy(match->key, match->left->key, BUFF_SZ);
+            match->left = NULL;
+            free(match->left);
+            printf("Removido.\n");
+            return;
+        }
         if (match->parent->left == match)
             match->parent->left = match->left;
 
@@ -110,6 +119,15 @@ void bst_delete(Node *bst)
     // If has child node to right
     if (match->left == NULL)
     {
+        if (match->parent == NULL)
+        {
+            match->value = match->right->value;
+            strncpy(match->key, match->right->key, BUFF_SZ);
+            match->right = NULL;
+            free(match->right);
+            printf("Removido.\n");
+            return;
+        }
         if (match->parent->left == match)
             match->parent->left = match->right;
 
