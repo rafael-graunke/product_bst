@@ -57,11 +57,19 @@ int main(void)
             printf("Produto: ");
             scanf("%s", name);
             printf("\n");
-            bst_delete(bst_fetch(bst, name));
-            if(bst==NULL){
-                printf("adsad\n");
+            Node *match = bst_fetch(bst, name);
+            /*
+                Since variables "references" are just a copy of the pointer,
+                if the matched node is the root, we have to free it and set it
+                as NULL from here :(.
+            */
+            if (match->left == NULL && match->right == NULL && match->parent == NULL)
+            {
+                free(bst);
+                bst = NULL;
+                break;
             }
-
+            bst_delete(match);
             break;
         case 4:
             if (bst == NULL)

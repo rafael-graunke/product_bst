@@ -79,14 +79,6 @@ void bst_delete(Node *bst)
         return;
     }
 
-    // If it's a root
-    if (match->left == NULL && match->right == NULL && match->parent == NULL)
-    {
-        free(match);
-        printf("Removido.\n");
-        return;
-    }
-
     // If it's a leaf
     if (match->left == NULL && match->right == NULL)
     {
