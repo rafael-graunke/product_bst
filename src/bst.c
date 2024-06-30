@@ -69,9 +69,15 @@ Node *bst_fetch(Node *bst, char *key)
         return bst_fetch(bst->right, key);
 }
 
-void bst_delete(Node *bst, char *key)
+void bst_delete(Node *bst)
 {
-    Node *match = bst_fetch(bst, key);
+    Node *match = bst;
+
+    if (bst == NULL)
+    {
+        printf("Resultado: não encontrado.\n");
+        return;
+    }
 
     // If it's a leaf
     if (match->left == NULL && match->right == NULL)
@@ -83,12 +89,22 @@ void bst_delete(Node *bst, char *key)
             match->parent->right = NULL;
 
         free(match);
+        printf("Removido.\n");
         return;
     }
 
     // If has child node to left
     if (match->right == NULL)
     {
+        if (match->parent == NULL)
+        {
+            match->value = match->left->value;
+            strncpy(match->key, match->left->key, BUFF_SZ);
+            match->left = NULL;
+            free(match->left);
+            printf("Removido.\n");
+            return;
+        }
         if (match->parent->left == match)
             match->parent->left = match->left;
 
@@ -96,12 +112,22 @@ void bst_delete(Node *bst, char *key)
             match->parent->right = match->left;
 
         free(match);
+        printf("Removido.\n");
         return;
     }
 
-    // If has child node to left
+    // If has child node to right
     if (match->left == NULL)
     {
+        if (match->parent == NULL)
+        {
+            match->value = match->right->value;
+            strncpy(match->key, match->right->key, BUFF_SZ);
+            match->right = NULL;
+            free(match->right);
+            printf("Removido.\n");
+            return;
+        }
         if (match->parent->left == match)
             match->parent->left = match->right;
 
@@ -109,47 +135,56 @@ void bst_delete(Node *bst, char *key)
             match->parent->right = match->right;
 
         free(match);
+        printf("Removido.\n");
         return;
     }
 
     // If has two children
+    if (match->left != NULL && match->right != NULL)
+    {
+        Node *aux = match->left;
+        while (aux->right != NULL)
+        {
+            aux = aux->right;
+        }
+        match->value = aux->value;
 
-    // TODO: finish this :(
+        bst_delete(aux);
+        return;
+    }
 }
 
-void dfs_count(Node *bst, int *count)
+int dfs_count(Node *bst, int count)
 {
     if (bst == NULL)
-        return;
-
-    *count++;
-    dfs_count(bst->left, count);
-    dfs_count(bst->right, count);
+        return count;
+    count++;
+    count = dfs_count(bst->left, count);
+    count = dfs_count(bst->right, count);
+    return count;
 }
 
-void dfs_value_count(Node *bst, int *count)
+int dfs_value_count(Node *bst, int count)
 {
     if (bst == NULL)
-        return;
+        return count;
 
-    *count += bst->value;
-    dfs_count(bst->left, count);
-    dfs_count(bst->right, count);
+    count += bst->value;
+    count = dfs_value_count(bst->left, count);
+    count = dfs_value_count(bst->right, count);
 }
 
 /* Retorna o numero total de produtos (nao as quantidades) */
 int bst_count(Node *bst)
 {
-    int count = 0;
-    dfs_count(bst, &count);
+    int count = dfs_count(bst, 0);
 
     return count;
 }
 /* Retorna a soma total de todas as quantidades de produtos */
 int bst_value_count(Node *bst)
 {
-    int count = 0;
-    dfs_value_count(bst, &count);
+    int count = dfs_value_count(bst, 0);
 
     return count;
 }
@@ -163,6 +198,20 @@ void bst_show(Node *bst)
     bst_show(bst->left);
     printf("%s %d\n", bst->key, bst->value);
     bst_show(bst->right);
+}
+
+void bst_show_by_letter(Node *bst, char letter)
+{
+    /* For alphabetic order we need to use inorder */
+    if (bst == NULL)
+        return;
+
+    bst_show_by_letter(bst->left, letter);
+    if (letter == bst->key[0])
+    {
+        printf("%s %d\n", bst->key, bst->value);
+    }
+    bst_show_by_letter(bst->right, letter);
 }
 
 void bst_show_over(Node *bst, int value)
@@ -197,6 +246,19 @@ void bst_show_preorder(Node *bst)
         return;
 
     printf("%s %d\n", bst->key, bst->value);
-    bst_show(bst->left);
-    bst_show(bst->right);
+    bst_show_preorder(bst->left);
+    bst_show_preorder(bst->right);
+}
+
+void bst_fetch_print(Node *bst, char *key)
+{
+    Node *match = bst_fetch(bst, key);
+    if (match == NULL)
+    {
+        printf("Resultado: não encontrado.\n");
+    }
+    else
+    {
+        printf("Resultado: %s %d\n", bst->key, bst->value);
+    }
 }
