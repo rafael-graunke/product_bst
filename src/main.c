@@ -5,7 +5,7 @@
 void print_menu(void)
 {
     printf("### Produtos ###\n\n 1 - Insere Produto\n 2 - Busca Produto\n 3 - Remove Produto\n 4 - Total Produtos\n 5 - Quantidade Total Produtos\n ");
-    printf("6 - Exibe Produtos Total\n 7 - Exite Produtos por Letra\n 8 - Exibe por Quantidade Acima\n 9 - Exibe por Quantidade Abaixo\n 10 - Percuso Prefixada\n ");
+    printf("6 - Exibe Produtos Total\n 7 - Exite Produtos por Letra\n 8 - Exibe por Quantidade Abaixo\n 9 - Exibe por Quantidade Acima\n 10 - Percuso Prefixada\n ");
     printf("0 - Sair\n");
 }
 
@@ -120,7 +120,7 @@ int main(void)
             printf("Exibe por Quantidade Abaixo:\n");
             printf("Quantidade:\n");
             scanf("%d", &value);
-            bst_show_over(bst, value);
+            bst_show_below(bst, value);
             break;
             break;
         case 9:
@@ -132,7 +132,7 @@ int main(void)
             printf("Exibe por Quantidade Acima:\n");
             printf("Quantidade:\n");
             scanf("%d", &value);
-            bst_show_below(bst, value);
+            bst_show_over(bst, value);
             break;
             break;
         case 10:
