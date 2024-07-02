@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "bst.h"
 
 void print_menu(void)
@@ -9,13 +10,22 @@ void print_menu(void)
     printf("0 - Sair\n");
 }
 
+int get_key(char c)
+{
+    return toupper(c) - 'A';
+}
+
 int main(void)
 {
-    int option = -1;
-    Node *bst = NULL;
+    int key, count, option = -1;
+    char letter;
+    Node *bst[26];
+
+    for (int i = 0; i < 26; i++)
+        bst[i] = NULL;
+
     int value;
     char name[BUFF_SZ];
-    int count;
     while (option != 0)
     {
         print_menu();
@@ -28,121 +38,101 @@ int main(void)
             scanf("%s", name);
             printf("\nQuantidade: ");
             scanf("%d", &value);
-            if (bst == NULL)
+            key = get_key(name[0]);
+            if (bst[key] == NULL)
             {
-                bst = bst_create(NULL, name, value);
+                bst[key] = bst_create(NULL, name, value);
                 break;
             }
-            bst_insert(bst, name, value);
+            bst_insert(bst[key], name, value);
             break;
         case 2:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Busca Produto:\n");
             printf("Produto: ");
             scanf("%s", name);
             printf("\n");
-            bst_fetch_print(bst, name);
+            key = get_key(name[0]);
+            if (bst[key] != NULL)
+                bst_fetch_print(bst[key], name);
             break;
         case 3:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Deletar Produto:\n");
             printf("Produto: ");
             scanf("%s", name);
             printf("\n");
-            Node *match = bst_fetch(bst, name);
-            /*
-                Since variables "references" are just a copy of the pointer,
-                if the matched node is the root, we have to free it and set it
-                as NULL from here :(.
-            */
-            if (match->left == NULL && match->right == NULL && match->parent == NULL)
+            key = get_key(name[0]);
+            if (bst[key] != NULL)
             {
-                free(bst);
-                bst = NULL;
-                break;
+                Node *match = bst_fetch(bst[key], name);
+                /*
+                    Since variables "references" are just a copy of the pointer,
+                    if the matched node is the root, we have to free it and set it
+                    as NULL from here :(.
+                */
+                if (match->left == NULL && match->right == NULL && match->parent == NULL)
+                {
+                    free(bst[key]);
+                    bst[key] = NULL;
+                    break;
+                }
+                bst_delete(match);
             }
-            bst_delete(match);
             break;
         case 4:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
-            count = bst_count(bst);
+            count = 0;
+            for (int i = 0; i < 26; i++)
+                count += bst_count(bst[i]);
             printf("Total de Produtos:\n");
             printf("%d\n", count);
             break;
         case 5:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
-            count = bst_value_count(bst);
+            count = 0;
+            for (int i = 0; i < 26; i++)
+                count += bst_value_count(bst[i]);
             printf("Quantidade Total de Produtos:\n");
             printf("%d\n", count);
             break;
         case 6:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Exibe Produtos Total:\n");
-            bst_show(bst);
+            for (int i = 0; i < 26; i++)
+                bst_show(bst[i]);
             break;
         case 7:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Exite Produtos por Letra:\n");
             printf("Letra:\n");
-            char letter = getchar();
-            bst_show_by_letter(bst, letter);
-            break;
-        case 8:
-            if (bst == NULL)
+            letter = getchar();
+            getchar(); // Clear \n
+            key = get_key(name[0]);
+            if (bst[key] == NULL)
             {
                 printf("Nenhum Produto Registrado.\n");
                 break;
             }
+            bst_show_by_letter(bst[key], letter);
+            break;
+        case 8:
             printf("Exibe por Quantidade Abaixo:\n");
             printf("Quantidade:\n");
             scanf("%d", &value);
-            bst_show_below(bst, value);
+            for (int i = 0; i < 26; i++)
+                bst_show_below(bst[i], value);
             break;
             break;
         case 9:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Exibe por Quantidade Acima:\n");
             printf("Quantidade:\n");
             scanf("%d", &value);
-            bst_show_over(bst, value);
+            for (int i = 0; i < 26; i++)
+                bst_show_over(bst[i], value);
             break;
             break;
         case 10:
-            if (bst == NULL)
-            {
-                printf("Nenhum Produto Registrado.\n");
-                break;
-            }
             printf("Percuso Prefixada:\n");
-            bst_show_preorder(bst);
+            printf("Letra:\n");
+            letter = getchar();
+            getchar(); // Clear \n
+            key = get_key(name[0]);
+            bst_show_preorder(bst[key]);
             break;
         }
     }
