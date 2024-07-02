@@ -131,7 +131,12 @@ int main(void)
             printf("Letra:\n");
             letter = getchar();
             getchar(); // Clear \n
-            key = get_key(name[0]);
+            key = get_key(letter);
+            if (bst[key] == NULL)
+            {
+                printf("Nenhum Produto Registrado.\n");
+                break;
+            }
             bst_show_preorder(bst[key]);
             break;
         }
